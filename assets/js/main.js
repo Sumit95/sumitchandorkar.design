@@ -1,21 +1,149 @@
+const math = {
+  lerp: (a, b, n) => {
+    return (1 - n) * a + n * b;
+  },
+  norm: (value, min, max) => {
+    return (value - min) / (max - min);
+  } };
 
-// Custom Cursor
-// init plugin
-// $( function() {
-//     NodeCursor({
-//         cursor : true, 
-//         node : true, 
-//         cursor_velocity : 1, 
-//         node_velocity : 0.15, 
-//         native_cursor : 'none', 
-//         element_to_hover : '.nodeHover', 
-//         cursor_class_hover : 'disable', 
-//         node_class_hover : 'expand', 
-//         hide_mode : false, 
-//         hide_timing : 2000, 
-//     });
 
-// });
+const config = {
+  height: window.innerHeight,
+  width: window.innerWidth };
+
+
+class Smooth {
+  constructor() {
+    this.bindMethods();
+
+    this.data = {
+      ease: 0.1,
+      current: 0,
+      last: 0 };
+
+
+    this.dom = {
+      el: document.querySelector('[data-scroll]'),
+      content: document.querySelector('[data-scroll-content]') };
+
+
+    this.rAF = null;
+
+    this.init();
+  }
+
+  bindMethods() {
+    ['scroll', 'run', 'resize'].
+    forEach(fn => this[fn] = this[fn].bind(this));
+  }
+
+  setStyles() {
+    Object.assign(this.dom.el.style, {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      height: '100%',
+      width: '100%',
+      overflow: 'hidden' });
+
+  }
+
+  setHeight() {
+    document.body.style.height = `${this.dom.content.offsetHeight}px`;
+  }
+
+  resize() {
+    this.setHeight();
+    this.scroll();
+  }
+
+  preload() {
+    imagesLoaded(this.dom.content, instance => {
+      this.setHeight();
+    });
+  }
+
+  scroll() {
+    this.data.current = window.scrollY;
+  }
+
+  run() {
+    this.data.last = math.lerp(this.data.last, this.data.current, this.data.ease);
+    if (this.data.last < .1) {
+      this.data.last = 0;
+    }
+
+    const diff = this.data.current - this.data.last;
+    const acc = diff / config.width;
+    const velo = +acc;
+    const skew = velo * 7.5;
+
+    this.dom.content.style.transform = `translate3d(0, -${this.data.last}px, 0) skewY(${skew}deg)`;
+
+    this.requestAnimationFrame();
+  }
+
+  on() {
+    this.setStyles();
+    this.setHeight();
+    this.addEvents();
+
+    this.requestAnimationFrame();
+  }
+
+  off() {
+    this.cancelAnimationFrame();
+
+    this.removeEvents();
+  }
+
+  requestAnimationFrame() {
+    this.rAF = requestAnimationFrame(this.run);
+  }
+
+  cancelAnimationFrame() {
+    cancelAnimationFrame(this.rAF);
+  }
+
+  destroy() {
+    document.body.style.height = '';
+
+    this.data = null;
+
+    this.removeEvents();
+    this.cancelAnimationFrame();
+  }
+
+  resize() {
+    this.setHeight();
+  }
+
+  addEvents() {
+    window.addEventListener('resize', this.resize, { passive: true });
+    window.addEventListener('scroll', this.scroll, { passive: true });
+  }
+
+  removeEvents() {
+    window.removeEventListener('resize', this.resize, { passive: true });
+    window.removeEventListener('scroll', this.scroll, { passive: true });
+  }
+
+  init() {
+    this.preload();
+    this.on();
+  }}
+
+
+new Smooth();
+
+
+//Horizontal Scroll
+$(document).on('scroll', function(){
+  $('.design').css("right", Math.max(5 - 0.40*window.scrollY)),
+      $('.development').css("left", Math.max(500 - 0.30*window.scrollY))
+})
+
+//Cursor
 
 // set the starting position of the cursor outside of the screen
 let clientX = -100;
@@ -202,152 +330,3 @@ const initHovers = () => {
 };
 
 initHovers();
-
-
-//Horizontal Scroll
-$(document).on('scroll', function(){
-    $('.design').css("right", Math.max(5 - 0.80*window.scrollY)),
-        $('.development').css("left", Math.max(500 - 0.55*window.scrollY))
-})
-
-
-
-// Image Smooth Scrolling
-
-const math = {
-  lerp: (a, b, n) => {
-    return (1 - n) * a + n * b;
-  },
-  norm: (value, min, max) => {
-    return (value - min) / (max - min);
-  } };
-
-
-const config = {
-  height: window.innerHeight,
-  width: window.innerWidth };
-
-
-class Smooth {
-  constructor() {
-    this.bindMethods();
-
-    this.data = {
-      ease: 0.1,
-      current: 1,
-      last: 0,
-      rounded: 0 };
-
-
-    this.dom = {
-      el: document.querySelector('[data-scroll]'),
-      content: document.querySelector('[data-scroll-content]') };
-
-
-    this.rAF = null;
-
-    this.init();
-  }
-
-  bindMethods() {
-    ['scroll', 'run', 'resize'].
-    forEach(fn => this[fn] = this[fn].bind(this));
-  }
-
-  setStyles() {
-    Object.assign(this.dom.el.style, {
-      position: 'static',
-      top: 0,
-      left: 0,
-      height: '100%',
-      width: '100%',
-      overflow: 'hidden' });
-
-  }
-
-  setHeight() {
-    document.body.style.height = `${this.dom.content.getBoundingClientRect().height}px`;
-  }
-
-  resize() {
-    this.setHeight();
-    this.scroll();
-  }
-
-  preload() {
-    imagesLoaded(this.dom.content, instance => {
-      this.setHeight();
-    });
-  }
-
-  scroll() {
-    this.data.current = window.scrollY;
-  }
-
-  run() {
-    this.data.last += (this.data.current - this.data.last) * this.data.ease;
-    this.data.rounded = Math.round(this.data.last * 100) / 100;
-
-    const diff = this.data.current - this.data.rounded;
-    const acc = diff / config.width;
-    const velo = +acc;
-    const skew = velo * 7.5;
-
-    this.dom.content.style.transform = `translate3d(0, -${this.data.rounded}px, 0) skewY(${skew}deg)`;
-
-    this.requestAnimationFrame();
-  }
-
-  on() {
-    this.setStyles();
-    this.setHeight();
-    this.addEvents();
-
-    this.requestAnimationFrame();
-  }
-
-  off() {
-    this.cancelAnimationFrame();
-
-    this.removeEvents();
-  }
-
-  requestAnimationFrame() {
-    this.rAF = requestAnimationFrame(this.run);
-  }
-
-  cancelAnimationFrame() {
-    cancelAnimationFrame(this.rAF);
-  }
-
-  destroy() {
-    document.body.style.height = '';
-
-    this.data = null;
-
-    this.removeEvents();
-    this.cancelAnimationFrame();
-  }
-
-  resize() {
-    this.setHeight();
-    this.data.rounded = this.data.last = this.data.current;
-  }
-
-  addEvents() {
-    window.addEventListener('resize', this.resize, { passive: true });
-    window.addEventListener('scroll', this.scroll, { passive: true });
-  }
-
-  removeEvents() {
-    window.removeEventListener('resize', this.resize, { passive: true });
-    window.removeEventListener('scroll', this.scroll, { passive: true });
-  }
-
-  init() {
-    this.preload();
-    this.on();
-  }}
-
-
-new Smooth();
