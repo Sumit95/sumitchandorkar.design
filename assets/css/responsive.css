@@ -1,3 +1,11 @@
+/*** XL SCREEN ***/
+@media (min-width:1600px){
+    .container{max-width:1470px!important}
+}
+
+/*** TABLE ***/
+
+/*** MOBILE ***/
 @media (max-width:567px){
     .hero-section .col-lg-8{ transform:translateY(52vh) ; -webkit-transform:translateY(52vh) ; -moz-transform:translateY(52vh) ; -ms-transform:translateY(52vh) ; -o-transform:translateY(52vh) ; }
     .hero-section .col-lg-8 p{font-size: 2.2vmax;}
