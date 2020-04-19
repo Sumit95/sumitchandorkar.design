@@ -9,7 +9,7 @@
 @media (max-width:567px){
     .hero-section .col-lg-8{ transform:translateY(52vh) ; -webkit-transform:translateY(52vh) ; -moz-transform:translateY(52vh) ; -ms-transform:translateY(52vh) ; -o-transform:translateY(52vh) ; }
     .hero-section .col-lg-8 p{font-size: 2.2vmax;}
-    .design { transform: translateX(-25%); -webkit-transform: translateX(-25%); -moz-transform: translateX(-25%); -ms-transform: translateX(-25%); -o-transform: translateX(-25%);}
+    .design { transform: translateX(-25%); -webkit-transform: translateX(-25%); -moz-transform: translateX(-25%); -ms-transform: translateX(-25%); -o-transform: translateX(-25%); }
     .development{ transform: translate(-50%, 66%); -webkit-transform: translate(-50%, 66%); -moz-transform: translate(-50%, 66%); -ms-transform: translate(-50%, 66%); -o-transform: translate(-50%, 66%); }
     .my-work{margin-top: 40px;}
     h2{font-size: 4vmax;}
@@ -17,4 +17,9 @@
     a{font-size: 18px;}
     .contact-us h2 > a{font-size: 4vmax;}
     .social-links .col-lg-4{padding-bottom: 16px;}
+    /* nav.navbar{justify-content: center;} */
+}
+
+@media (max-width: 375px){
+    .hero-section .col-lg-8{ transform:translateY(38vh) ; -webkit-transform:translateY(38vh) ; -moz-transform:translateY(38vh) ; -ms-transform:translateY(38vh) ; -o-transform:translateY(38vh) ; }
 }
